@@ -1,0 +1,7 @@
+# 模板仓本身的忽略规则：模板里不应出现实战产物。
+# 实战实例从模板复制出去后，要在实例里另加更严的忽略规则：
+# 解题清单.md、环境登记.md、workspaces/*/IDENTITY.md、workspaces/*/notes.md、*.log、*.conflict
+*.log
+*.conflict
+.locks/
+workspaces/*/logs/
