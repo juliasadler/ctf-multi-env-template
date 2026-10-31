@@ -7,8 +7,11 @@
 #   ./scripts/update-status.sh <题目编号> <环境ID> 已放弃 --note '原因'
 #   ./scripts/update-status.sh <题目编号> <环境ID> 阻塞 --note '卡点'
 #   ./scripts/update-status.sh <题目编号> <环境ID> 未开始 --note '归还原因'
-# 状态流转只允许：未开始->已认领；已认领/进行中->进行中/已完成/已放弃/阻塞；
+#   ./scripts/update-status.sh <题目编号> <环境ID> 待办 --note '分诊结论'
+#   ./scripts/update-status.sh <题目编号> <环境ID> 已认领 --force  # 接管超1小时失联的认领
+# 状态流转只允许：未开始->已认领/待办；待办->已认领/未开始；已认领/进行中->进行中/已完成/已放弃/阻塞；
 # 已放弃/阻塞->已认领（重新认领时认领者改为新环境）；已完成不再改回。
+# 认领超时：已认领超 1 小时未动到进行中视为失联，其他环境可用 --force 接管。
 # 平台提交列不在本脚本里改，提交平台后手工把那列改成已提交，并注明提交时间。
 set -euo pipefail
 
@@ -18,12 +21,14 @@ NEW_STATUS="${3:-}"
 FLAG=""
 DOC=""
 NOTE=""
+FORCE=""
 shift 3 || true
 while [ $# -gt 0 ]; do
   case "$1" in
     --flag) FLAG="${2:-}"; shift 2 ;;
     --doc) DOC="${2:-}"; shift 2 ;;
     --note) NOTE="${2:-}"; shift 2 ;;
+    --force) FORCE="1"; shift ;;
     *) echo "未知参数：$1" >&2; exit 1 ;;
   esac
 done
@@ -33,8 +38,8 @@ if [ -z "$CHALLENGE" ] || [ -z "$ENV_ID" ] || [ -z "$NEW_STATUS" ]; then
   exit 1
 fi
 case "$NEW_STATUS" in
-  未开始|已认领|进行中|已完成|已放弃|阻塞) ;;
-  *) echo "状态只能是：未开始 / 已认领 / 进行中 / 已完成 / 已放弃 / 阻塞" >&2; exit 1 ;;
+  未开始|待办|已认领|进行中|已完成|已放弃|阻塞) ;;
+  *) echo "状态只能是：未开始 / 待办 / 已认领 / 进行中 / 已完成 / 已放弃 / 阻塞" >&2; exit 1 ;;
 esac
 if [ "$NEW_STATUS" = "已完成" ] && [ -z "$FLAG" ]; then
   echo "改成已完成时必须带 --flag，flag 只记本地清单" >&2
@@ -56,7 +61,7 @@ if ! flock -w 30 9; then
 fi
 
 CHALLENGE="$CHALLENGE" ENV_ID="$ENV_ID" NEW_STATUS="$NEW_STATUS" \
-FLAG="$FLAG" DOC="$DOC" NOTE="$NOTE" NOW_BJ="$NOW_BJ" LIST="$LIST" \
+FLAG="$FLAG" DOC="$DOC" NOTE="$NOTE" FORCE="$FORCE" NOW_BJ="$NOW_BJ" LIST="$LIST" \
 python3 - <<'PY'
 import os, sys
 
@@ -87,7 +92,8 @@ for col in ["编号", "状态", "认领者"]:
         sys.exit(1)
 
 allowed = {
-    "未开始": {"已认领"},
+    "未开始": {"已认领", "待办"},
+    "待办": {"已认领", "未开始"},
     "已认领": {"进行中", "已完成", "已放弃", "阻塞"},
     "进行中": {"进行中", "已完成", "已放弃", "阻塞"},
     "已放弃": {"已认领"},
@@ -110,10 +116,49 @@ for i in range(header_idx + 2, len(lines)):
         sys.exit(1)
     old_status = cells[idx["状态"]]
     old_claimer = cells[idx["认领者"]]
-    if new_status not in allowed.get(old_status, set()):
+    force = os.environ.get("FORCE", "")
+    # --force 接管特例：已认领→已认领时跳过流转检查，走下面的失联接管逻辑
+    is_takeover = (new_status == "已认领" and old_status == "已认领" and force)
+    if not is_takeover and new_status not in allowed.get(old_status, set()):
+        # 已认领→已认领（无 force）：检查是否失联，给友好提示
+        if new_status == "已认领" and old_status == "已认领":
+            from datetime import datetime, timedelta, timezone
+            try:
+                ct_s = cells[idx["认领时间（北京时间）"]] if "认领时间（北京时间）" in idx else "-"
+                ct = datetime.strptime(ct_s, "%Y-%m-%d %H:%M")
+                bj_now = datetime.now(timezone(timedelta(hours=8))).replace(tzinfo=None)
+                if (bj_now - ct) > timedelta(hours=1):
+                    print(f"这题已失联（{old_claimer}，{ct_s}），加 --force 接管：update-status.sh {challenge} {env_id} 已认领 --force", file=sys.stderr)
+                    sys.exit(1)
+            except (ValueError, TypeError, KeyError):
+                pass
         print(f"不允许的状态流转：{old_status} -> {new_status}（当前认领者：{old_claimer}）", file=sys.stderr)
         sys.exit(1)
-    if new_status in ("已认领", "进行中", "已完成") and old_claimer not in ("-", "", env_id) and old_status not in ("已放弃", "阻塞", "未开始"):
+    if new_status == "已认领" and old_status == "已认领" and old_claimer not in ("-", "", env_id):
+        # 检查是否超时（1小时）：认领时间超1h且还在已认领，视为失联
+        from datetime import datetime, timedelta, timezone
+        claim_time_s = cells[idx["认领时间（北京时间）"]] if "认领时间（北京时间）" in idx else "-"
+        is_stale = False
+        try:
+            claim_time = datetime.strptime(claim_time_s, "%Y-%m-%d %H:%M")
+            bj_now = datetime.now(timezone(timedelta(hours=8))).replace(tzinfo=None)
+            is_stale = (bj_now - claim_time) > timedelta(hours=1)
+        except (ValueError, TypeError):
+            pass
+        if is_stale and force:
+            old_note = cells[idx["备注"]] if "备注" in idx else "-"
+            takeover_note = f"接管自{old_claimer}（认领超时1h失联）"
+            cells[idx["备注"]] = takeover_note if old_note in ("-", "") else old_note + "；" + takeover_note
+            # 允许接管：把旧认领者视为可覆盖
+            old_claimer = env_id
+            print(f"已接管失联认领：原认领者 {cells[idx['认领者']]}，已记入备注", file=sys.stderr)
+        elif not is_stale:
+            print(f"这题已被 {old_claimer} 认领（{claim_time_s}，未超时），不要抢；用 check-stale.sh 查失联", file=sys.stderr)
+            sys.exit(1)
+        else:
+            print(f"这题已失联（{old_claimer}，{claim_time_s}），加 --force 接管", file=sys.stderr)
+            sys.exit(1)
+    if new_status in ("已认领", "进行中", "已完成") and old_claimer not in ("-", "", env_id) and old_status not in ("已放弃", "阻塞", "未开始", "待办"):
         print(f"这题已被 {old_claimer} 认领，当前状态 {old_status}，不要抢", file=sys.stderr)
         sys.exit(1)
     cells[idx["状态"]] = new_status
@@ -141,3 +186,4 @@ if not found:
 open(path, "w", encoding="utf-8").write("\n".join(lines) + "\n")
 print(f"已更新：{challenge} -> {new_status}（{env_id}，北京时间 {now}）")
 PY
+

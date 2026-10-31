@@ -22,6 +22,14 @@ WS="$CTF_ROOT/workspaces/$ENV_ID"
 REGISTRY="$CTF_ROOT/环境登记.md"
 NOW_BJ="$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M')"
 
+mkdir -p "$(dirname "$0")/../.locks"
+REG_LOCK="$(dirname "$0")/../.locks/环境登记.lock"
+exec 8>"$REG_LOCK"
+if ! flock -w 30 8; then
+  echo "拿不到环境登记锁（30 秒），稍后再试" >&2
+  exit 1
+fi
+
 if [ -e "$WS" ]; then
   echo "工作目录已存在，拒绝重复建：$WS" >&2
   exit 1
