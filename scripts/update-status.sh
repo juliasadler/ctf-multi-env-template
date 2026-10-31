@@ -65,12 +65,16 @@ FLAG="$FLAG" DOC="$DOC" NOTE="$NOTE" FORCE="$FORCE" NOW_BJ="$NOW_BJ" LIST="$LIST
 python3 - <<'PY'
 import os, sys
 
+def clean(s):
+    """防表格注入：| 会破坏 markdown 表格结构，换行会断行"""
+    return s.replace("|", " ").replace("\n", " ").replace("\r", " ")
+
 challenge = os.environ["CHALLENGE"]
 env_id = os.environ["ENV_ID"]
 new_status = os.environ["NEW_STATUS"]
-flag = os.environ["FLAG"]
-doc = os.environ["DOC"]
-note = os.environ["NOTE"]
+flag = clean(os.environ["FLAG"])
+doc = clean(os.environ["DOC"])
+note = clean(os.environ["NOTE"])
 now = os.environ["NOW_BJ"]
 path = os.environ["LIST"]
 
@@ -93,7 +97,7 @@ for col in ["编号", "状态", "认领者"]:
 
 allowed = {
     "未开始": {"已认领", "待办"},
-    "待办": {"已认领", "未开始"},
+    "待办": {"已认领", "未开始", "已放弃"},
     "已认领": {"进行中", "已完成", "已放弃", "阻塞"},
     "进行中": {"进行中", "已完成", "已放弃", "阻塞"},
     "已放弃": {"已认领"},
@@ -148,7 +152,8 @@ for i in range(header_idx + 2, len(lines)):
         if is_stale and force:
             old_note = cells[idx["备注"]] if "备注" in idx else "-"
             takeover_note = f"接管自{old_claimer}（认领超时1h失联）"
-            cells[idx["备注"]] = takeover_note if old_note in ("-", "") else old_note + "；" + takeover_note
+            if "备注" in idx:
+                cells[idx["备注"]] = takeover_note if old_note in ("-", "") else old_note + "；" + takeover_note
             # 允许接管：把旧认领者视为可覆盖
             old_claimer = env_id
             print(f"已接管失联认领：原认领者 {cells[idx['认领者']]}，已记入备注", file=sys.stderr)

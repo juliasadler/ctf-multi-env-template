@@ -16,6 +16,10 @@ if ! printf '%s' "$ENV_ID" | grep -Eq '^[a-z0-9][a-z0-9-]*$'; then
   echo "环境 ID 只用小写字母、数字、连字符，且以字母或数字开头：$ENV_ID" >&2
   exit 1
 fi
+# 防表格注入：角色/主机含 | 会破坏登记表格结构
+if printf '%s' "$ROLE$HOST" | grep -q '[|]'; then
+  echo "角色/主机不能含 | 符号" >&2; exit 1
+fi
 
 CTF_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 WS="$CTF_ROOT/workspaces/$ENV_ID"

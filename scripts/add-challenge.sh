@@ -31,6 +31,11 @@ esac
 if ! printf '%s' "$SLUG" | grep -Eq '^[a-z0-9][a-z0-9-]*$'; then
   echo "简称只用小写字母、数字、连字符：$SLUG" >&2; exit 1
 fi
+# 防表格注入：题名含 | 或换行会破坏清单表格结构
+if printf '%s' "$TITLE" | grep -q '[|]'; then
+  echo "题名不能含 | 符号：$TITLE" >&2; exit 1
+fi
+TITLE="$(printf '%s' "$TITLE" | tr -d '\n\r')"
 
 CTF_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 LIST="$CTF_ROOT/解题清单.md"

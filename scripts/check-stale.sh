@@ -24,7 +24,6 @@ if header_idx is None:
 
 headers = [c.strip() for c in lines[header_idx].strip().strip("|").split("|")]
 idx = {name: j for j, name in enumerate(headers)}
-now = datetime.now().astimezone()  # 本地时间，换算成北京时间比较
 # 北京时间 = UTC+8
 from datetime import timezone
 bj_now = datetime.now(timezone(timedelta(hours=8))).replace(tzinfo=None)
