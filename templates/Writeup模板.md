@@ -50,8 +50,9 @@
 [TODO] 用 tmuxshot.py 从本题 tmux 会话生成，每张配一句话说明：
 
 ```bash
-python3 <tmuxshot.py路径> \
+python3 /home/kali/CTF/scripts/tmuxshot.py \
   --target ctf-{{认领者}}-{{题目编号}} --scrollback 200 \
+  --chrome ~/.cache/chrome-headless-shell/chrome-headless-shell-linux64/chrome-headless-shell \
   --title "{{题目编号}} 关键步骤" -o Writeup-{{题目编号}}-step1.png
 ```
 
