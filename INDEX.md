@@ -31,7 +31,7 @@
 
 ## `templates/` —— 文档模板
 
-- `身份卡模板.md` / `过程文档模板.md` / `题目说明模板.md`
+- `身份卡模板.md` / `过程文档模板.md` / `题目说明模板.md` / `赛后复盘模板.md`
 
 ## `scripts/` —— 运维脚本（`chmod +x` 后用）
 
@@ -46,6 +46,7 @@
 - `README.md`——skill 使用与新增规范（含外部引用说明）
 - `skill-template.md`——新 skill 空模板
 - `triage.md`——总入口：分诊表、OODA 解题循环、状态记录、卡住恢复（先读）
+- `选题策略.md`——限时比赛先做哪道：分值/难度/时间盒三维决策（比赛开赛前读）
 - `patterns.md`——跨题型模式速查（特征→模式→去哪）、绕过策略通用原则
 - `web.md` / `crypto.md` / `misc.md` / `reverse.md` / `pwn.md`——各题型：识别特征 → 检查清单 → 常用工具 → 常见坑
 - `forensics.md` / `osint.md` / `ai-ml.md` / `malware.md`——新增题型 skill（取证/OSINT/AI 攻防/样本分析）
