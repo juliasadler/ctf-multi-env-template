@@ -37,6 +37,7 @@
 │       └── notes.md           # 杂记（不放 flag）
 ├── templates/                 # 身份卡、过程文档、题目说明模板
 └── scripts/                   # 建工作目录、起 tmux、查认领、带锁改状态、给窗口开日志
+├── skills/                    # 各题型解题方法沉淀（Web/Crypto/MISC/Reverse/Pwn），做题前先读
 ```
 
 ## 三、从模板建实战实例（只做一次）
