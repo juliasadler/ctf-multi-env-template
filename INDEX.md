@@ -31,7 +31,7 @@
 
 ## `templates/` —— 文档模板
 
-- `身份卡模板.md` / `过程文档模板.md` / `题目说明模板.md` / `赛后复盘模板.md`
+- `身份卡模板.md` / `过程文档模板.md` / `题目说明模板.md` / `赛后复盘模板.md`（内部复盘，不写 flag）/ `Writeup模板.md`（通用版，对外交裁判，含 flag）
 
 ## `scripts/` —— 运维脚本（`chmod +x` 后用）
 
@@ -40,6 +40,7 @@
 - `log-window.sh`——给题目会话内的子任务窗口开日志
 - `check-claim.sh`——查题目认领状态（含失联警告）
 - `check-stale.sh`——列出认领超 1 小时无进展的失联题目
+- `generate-writeup.sh`——从解题清单+过程文档半自动生成 Writeup 初稿（[TODO] 待人工补）
 - `add-challenge.sh`——新增题目（自动取号、建目录、插行，带锁）
 - `update-status.sh`——带锁改清单状态（认领/待办/进行中/完成/放弃/阻塞，支持 --force 接管失联、--progress 更新进度、进行中记 flag）
 
