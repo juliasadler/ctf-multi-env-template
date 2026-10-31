@@ -49,6 +49,7 @@ triggers: ["nc地址", "checksec", "菜单题", "printf(buf)", "拿shell", "堆"
 6. **沙箱逃逸检查点**：`seccomp` 开了 → 看 allow 列表（`seccomp-tools dump`），`execve` 被禁就走 ORW（open-read-write 读 flag）；
    Python 沙箱题 → 本质是 jail，见 `misc.md` 第 7 步。
 7. **打远程**：本地通了，把 `process` 换 `remote(ip, port)`，地址/偏移用远程泄露的重新算一遍（本地 libc 和远程可能不一样）。
+> **防幻觉铁律**：数字、偏移、密钥、地址、flag 只写工具输出或文件里实际出现的值。
 
 ## 常用工具
 

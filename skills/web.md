@@ -56,16 +56,18 @@ triggers: ["URL", "IP+端口", "登录框", "SQL报错", "文件上传", "JWT", 
 6. **SSTI / IDOR**：`{{7*7}}` 回显 49 → 先判模板引擎（报错信息/Jinja2/Twig 特征），再找对应 payload；
    IDOR → 把 id 参数逐个改一遍，看到别人的数据即中，批量验证别手工。
 7. **拿 flag 后的动作**：按模板把"入口点→利用链→flag 位置"写进过程文档，别只记 flag。
+> **防幻觉铁律**：数字、偏移、密钥、地址、flag 只写工具输出或文件里实际出现的值。
 
 ## 常用工具
 
 | 工具 | 用来干什么 | 一句话用法 |
 | --- | --- | --- |
-| BurpSuite | 抓包改包、重放 | 浏览器挂代理，所有请求先过一遍 Repeater |
+| BurpSuite（含 MCP 形态） | 抓包改包、重放 | 人用：浏览器挂代理，所有请求先过一遍 Repeater；Agent：BurpSuite-MCP 直调（需先请用户打开 BurpSuite，确认后再调，文章 §6） |
 | sqlmap | 自动化注 | `--batch --dbs` 开局，有 WAF 加 `--tamper=space2comment` |
 | dirsearch / ffuf | 目录爆破 | `dirsearch -u URL -e php,html,js,txt,bak` |
 | 蚁剑 | 连 webshell | 上传成功后 URL+密码连，看回显 |
 | jwt_tool | JWT 检查 | `python jwt_tool.py <token>` 先扫算法混淆和弱密钥 |
+| Cairn | Web 黑盒多 Agent 并发信息收集 | `git clone https://github.com/oritera/Cairn`；多 Agent 并发收集→人工研判整合→新对话再探索（文章 §4） |
 
 ## 常见坑
 

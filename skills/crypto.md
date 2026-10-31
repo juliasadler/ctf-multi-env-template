@@ -52,6 +52,7 @@ triggers: ["密文", "n e c", "RSA", "base64", "srand", "加密脚本", "椭圆�
 5. **有脚本的题**：把加密函数抄出来，反着写解密函数，用题目给的样例验证（样例能对上，解密就对了）。
 6. **随机数题**：看到 `srand(time(0))` → 种子就是时间戳，前后爆破几秒；看到 `random.random()` 输出很多 → MT19937 状态恢复（624 个输出可还原，先找现成脚本）。
 7. **ECC/格（入门）**：ECC 给了小参数 → 用 `ecdsa` 库暴力/小子群；格攻击（Coppersmith）→ 先确认是"已知部分 p"的 RSA 变体，再找 Sage 模板，别手推。
+> **防幻觉铁律**：数字、偏移、密钥、地址、flag 只写工具输出或文件里实际出现的值。
 
 ## 常用工具
 
@@ -60,7 +61,7 @@ triggers: ["密文", "n e c", "RSA", "base64", "srand", "加密脚本", "椭圆�
 | CyberChef | 编码识别+转换 | "Magic" 自动猜，Recipe 链式拼 |
 | RsaCtfTool | RSA 自动攻击 | `python RsaCtfTool.py --publickey pub.pem --uncipher c.txt --autopwn` |
 | factordb | 查 n 分解 | 别人分解过直接抄 p q |
-| sage / sympy | 大数运算 | 开方、GCD、模逆 |
+| sage / sympy | 大数运算 | 本机 sympy 直接用；sage 走远程：`ssh ubuntu 'bash -lc "sage 命令"'`，再不行走 `ssh kali`；三处都没有就停下问用户，不许现场装（文章 §5 工具边界） |
 
 ## 常见坑
 

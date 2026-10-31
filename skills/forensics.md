@@ -47,6 +47,7 @@ triggers: [".img", ".raw", "攻击者IP", "被删文件", "auth.log", "volatilit
 4. **内存 dump**：`volatility` 先 `imageinfo` 定 profile，再 `pslist`（可疑进程）、`netscan`（网络连接）、`filescan + dumpfiles`（捞文件）。
 5. **流量包（取证视角）**：`统计 → 会话` 看"谁跟谁说话最多"；`导出对象 → HTTP/SMB` 捞传输的文件；DNS 查询记录看隧道/外连域名。
 6. **交叉验证**：同一结论至少两个来源对上（如日志 IP + 流量的 IP 一致），再写答案。
+> **防幻觉铁律**：数字、偏移、密钥、地址、flag 只写工具输出或文件里实际出现的值。
 
 ## 常用工具
 
