@@ -42,8 +42,12 @@
 
 ## `skills/` —— 题型解题方法沉淀（只讲方法，不写具体题目的答案）
 
-- `README.md`——skill 使用与新增规范
+- `README.md`——skill 使用与新增规范（含外部引用说明）
 - `skill-template.md`——新 skill 空模板
+- `triage.md`——总入口：分诊表、OODA 解题循环、状态记录、卡住恢复（先读）
+- `patterns.md`——跨题型模式速查（特征→模式→去哪）、绕过策略通用原则
 - `web.md` / `crypto.md` / `misc.md` / `reverse.md` / `pwn.md`——各题型：识别特征 → 检查清单 → 常用工具 → 常见坑
+- `forensics.md` / `osint.md` / `ai-ml.md` / `malware.md`——新增题型 skill（取证/OSINT/AI 攻防/样本分析）
+- `writeup.md`——赛后 Writeup 结构与脱敏自查
 
 当前已登记环境、已认领题目，以 `环境登记.md` 和 `解题清单.md` 的最新内容为准，本索引不重复抄表，避免两处对不上。
