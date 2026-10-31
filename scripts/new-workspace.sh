@@ -51,8 +51,8 @@ cat > "$WS/IDENTITY.md" <<EOF
 - 角色：$ROLE
 - 主机：$HOST
 - 工作目录路径：$WS
-- tmux 会话：ctf-$ENV_ID
-- tmux 日志路径：$WS/logs/tmux-ctf-$ENV_ID.log
+- 会话名前缀：ctf-$ENV_ID（一题一会话，每题完整会话名 ctf-$ENV_ID-<题目编号>）
+- tmux 日志路径：$WS/logs/tmux-ctf-$ENV_ID-<题目编号>.log（一题一日志）
 - 开始时间（北京时间）：$NOW_BJ
 - 负责分类：
 - 所属对话/来源：

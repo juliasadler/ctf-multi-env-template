@@ -72,14 +72,15 @@ chmod +x scripts/*.sh
    脚本会用文件锁重新读最新清单、校验状态、自动填北京时间，两个人同时认领同一题时只有一个能成功，另一个会报错退出。
    状态改动一律走这个脚本，不要两个人同时手工改同一个表。
 
-4. 进 tmux 再解题，所有操作都在 tmux 里：
+4. 进 tmux 再解题，一题一会话，所有操作都在 tmux 里：
    ```bash
-   ./scripts/start-tmux.sh <环境ID> [题目编号]
-   tmux attach -t ctf-<环境ID>
+   ./scripts/start-tmux.sh <环境ID> <题目编号>
+   tmux attach -t ctf-<环境ID>-<题目编号>
    ```
+   每道题独立会话、独立日志文件，互不干扰。会话内子任务分屏用 `log-window.sh` 开日志。
    在会话里新开窗口后，必须给新窗口开日志，否则该窗口不记日志：
    ```bash
-   ./scripts/log-window.sh ctf-<环境ID> [窗口名]
+   ./scripts/log-window.sh ctf-<环境ID>-<题目编号> [窗口名]
    ```
    在自己的工作目录里建本题目录，把共享题目附件复制过去再动，不要直接改 `challenges/` 里的原题。
    过程文档放在 `workspaces/<环境ID>/challenges/<题目编号>/过程文档.md`，按 `templates/过程文档模板.md` 写。

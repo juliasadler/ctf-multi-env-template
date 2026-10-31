@@ -9,6 +9,8 @@
 #   ./scripts/update-status.sh <题目编号> <环境ID> 未开始 --note '归还原因'
 #   ./scripts/update-status.sh <题目编号> <环境ID> 待办 --note '分诊结论'
 #   ./scripts/update-status.sh <题目编号> <环境ID> 已认领 --force  # 接管超1小时失联的认领
+#   ./scripts/update-status.sh <题目编号> <环境ID> 进行中 --progress '当前进展一句话'
+#   ./scripts/update-status.sh <题目编号> <环境ID> 进行中 --flag 'flag{...}'  # flag 一出来就记
 # 状态流转只允许：未开始->已认领/待办；待办->已认领/未开始；已认领/进行中->进行中/已完成/已放弃/阻塞；
 # 已放弃/阻塞->已认领（重新认领时认领者改为新环境）；已完成不再改回。
 # 认领超时：已认领超 1 小时未动到进行中视为失联，其他环境可用 --force 接管。
@@ -22,6 +24,7 @@ FLAG=""
 DOC=""
 NOTE=""
 FORCE=""
+PROGRESS=""
 shift 3 || true
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -29,6 +32,7 @@ while [ $# -gt 0 ]; do
     --doc) DOC="${2:-}"; shift 2 ;;
     --note) NOTE="${2:-}"; shift 2 ;;
     --force) FORCE="1"; shift ;;
+    --progress) PROGRESS="${2:-}"; shift 2 ;;
     *) echo "未知参数：$1" >&2; exit 1 ;;
   esac
 done
@@ -61,7 +65,7 @@ if ! flock -w 30 9; then
 fi
 
 CHALLENGE="$CHALLENGE" ENV_ID="$ENV_ID" NEW_STATUS="$NEW_STATUS" \
-FLAG="$FLAG" DOC="$DOC" NOTE="$NOTE" FORCE="$FORCE" NOW_BJ="$NOW_BJ" LIST="$LIST" \
+FLAG="$FLAG" DOC="$DOC" NOTE="$NOTE" FORCE="$FORCE" PROGRESS="$PROGRESS" NOW_BJ="$NOW_BJ" LIST="$LIST" \
 python3 - <<'PY'
 import os, sys
 
@@ -75,6 +79,7 @@ new_status = os.environ["NEW_STATUS"]
 flag = clean(os.environ["FLAG"])
 doc = clean(os.environ["DOC"])
 note = clean(os.environ["NOTE"])
+progress = clean(os.environ["PROGRESS"])
 now = os.environ["NOW_BJ"]
 path = os.environ["LIST"]
 
@@ -177,10 +182,15 @@ for i in range(header_idx + 2, len(lines)):
             cells[idx["完成时间（北京时间）"]] = now
         if "flag" in idx:
             cells[idx["flag"]] = flag
+    # flag 一出来就记：进行中时带 --flag 直接写 flag 列，不等到完成（防崩溃丢失）
+    if new_status == "进行中" and flag and "flag" in idx:
+        cells[idx["flag"]] = flag
         if doc and "过程文档路径" in idx:
             cells[idx["过程文档路径"]] = doc
     if note and "备注" in idx:
         cells[idx["备注"]] = note
+    if progress and "进度摘要" in idx:
+        cells[idx["进度摘要"]] = progress + f"（{now}）"
     lines[i] = "| " + " | ".join(cells) + " |"
     break
 
