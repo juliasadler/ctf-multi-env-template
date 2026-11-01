@@ -99,6 +99,8 @@ if os.path.exists(full_dir):
     print(f"目录已存在，换个简称：{full_dir}", file=sys.stderr)
     sys.exit(1)
 os.makedirs(full_dir)
+os.makedirs(os.path.join(full_dir, "files"), exist_ok=True)  # 题目附件/过程文件统一放 files/ 子目录
+open(os.path.join(full_dir, "files", ".gitkeep"), "w").close()  # git 不跟踪空目录，占位以便入库
 
 # 题目说明.md（从模板生成）
 if os.path.exists(template):
