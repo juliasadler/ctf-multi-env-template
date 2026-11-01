@@ -15,8 +15,8 @@ triggers: ["nc地址", "checksec", "菜单题", "printf(buf)", "拿shell", "堆"
 
 - pwntools：写 exp（`pip install pwntools`，赛前装好）。
 - checksec：看保护机制（pwntools 自带）。
-- pwndbg：动调（`cyclic` 算偏移、断点看栈）。
-- ROPgadget：找 gadget（`pip install ropgadget`）。
+- gef：动调（`cyclic` 算偏移、断点看栈；gdb 启动自动加载）。
+- ropper：找 gadget（`ropper --file ./vuln --search "pop rdi"`）。
 
 ## 触发词
 
@@ -57,8 +57,8 @@ triggers: ["nc地址", "checksec", "菜单题", "printf(buf)", "拿shell", "堆"
 | --- | --- | --- |
 | checksec | 看保护机制 | `checksec --file=./pwn` |
 | pwntools | 写 exp | `pwn template` 生成骨架，`elf/gdb/remote` 一条龙 |
-| ROPgadget | 找 gadget | `ROPgadget --binary ./pwn \| grep "pop rdi"` |
-| pwndbg | 动调 | `cyclic` 算偏移，断点看栈 |
+| ropper | 找 gadget | `ropper --file ./vuln --search "pop rdi"` |
+| gef | 动调 | `cyclic` 算偏移，断点看栈 |
 
 ## 常见坑
 

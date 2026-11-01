@@ -62,12 +62,12 @@ triggers: ["URL", "IP+端口", "登录框", "SQL报错", "文件上传", "JWT", 
 
 | 工具 | 用来干什么 | 一句话用法 |
 | --- | --- | --- |
-| BurpSuite（含 MCP 形态） | 抓包改包、重放 | 人用：浏览器挂代理，所有请求先过一遍 Repeater；Agent：BurpSuite-MCP 直调（需先请用户打开 BurpSuite，确认后再调，文章 §6） |
+| BurpSuite（含 MCP 形态） | 抓包改包、重放 | 人用：浏览器挂代理，所有请求先过一遍 Repeater；Agent：BurpSuite-MCP 直调（需先请用户打开 BurpSuite，确认后再调，《AI+CTF 山东省赛冠军方案》§6） |
 | sqlmap | 自动化注 | `--batch --dbs` 开局，有 WAF 加 `--tamper=space2comment` |
 | dirsearch / ffuf | 目录爆破 | `dirsearch -u URL -e php,html,js,txt,bak` |
 | 蚁剑 | 连 webshell | 上传成功后 URL+密码连，看回显 |
 | jwt_tool | JWT 检查 | `python jwt_tool.py <token>` 先扫算法混淆和弱密钥 |
-| Cairn | Web 黑盒多 Agent 并发信息收集 | `git clone https://github.com/oritera/Cairn`；多 Agent 并发收集→人工研判整合→新对话再探索（文章 §4） |
+| Cairn | Web 黑盒多 Agent 并发信息收集 | `git clone https://github.com/oritera/Cairn`；多 Agent 并发收集→人工研判整合→新对话再探索（《AI+CTF 山东省赛冠军方案》§4） |
 
 ## 常见坑
 

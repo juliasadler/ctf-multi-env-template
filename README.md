@@ -35,9 +35,11 @@
 │       ├── challenges/<编号>/ # 本题的工作副本 + 过程文档.md + 解题文件
 │       ├── logs/              # tmux 日志
 │       └── notes.md           # 杂记（不放 flag）
-├── templates/                 # 身份卡、过程文档、题目说明模板
-└── scripts/                   # 建工作目录、起 tmux、查认领、带锁改状态、给窗口开日志、新增题目、查失联
-├── skills/                    # 各题型解题方法沉淀（Web/Crypto/MISC/Reverse/Pwn），做题前先读
+├── templates/                 # 文档模板：身份卡、过程文档、题目说明、Writeup、赛后复盘、比赛工作流
+├── scripts/                   # 建工作目录、起 tmux、查认领、带锁改状态、给窗口开日志、新增题目、查失联、半自动生成 Writeup（generate-writeup.sh）、终端截图
+├── skills/                    # 14 个文件：各题型解题方法沉淀（web/crypto/misc/reverse/pwn/forensics/osint/ai-ml/malware/选题策略/writeup/triage/patterns），做题前先读
+├── prompts/                   # Agent 瘦身解题规范与状态卡模板
+└── references/                # 外部参考资料原文（如冠军文章方案 PDF）与说明
 ```
 
 ## 三、从模板建实战实例（只做一次）

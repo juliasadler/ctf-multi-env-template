@@ -9,7 +9,7 @@ triggers: ["图片附件", "zip密码", "二维码", "频谱", "pyjail", "binwal
 # MISC
 
 > 适用题型：给一个附件（图片/音频/压缩包），让你"找 hidden flag"。
-> 前置：会用 `file`、`binwalk`，会看 16 进制（`xxd`）。
+> 前置：会用 `file`、`binwalk`，会看 16 进制（`hexdump -C`）。
 > 注意：流量包取证（"攻击者是谁/传了什么"类问答）归 `forensics.md`，这里只讲"找 hidden flag"视角。
 
 ## 前置工具（Prerequisites）
@@ -18,7 +18,7 @@ triggers: ["图片附件", "zip密码", "二维码", "频谱", "pyjail", "binwal
 - zsteg / steghide：图片隐写（`gem install zsteg` / `apt install steghide`）。
 - Audacity：音频频谱（看 SSTV/摩斯）。
 - fcrackzip：压缩包爆破（真加密且明文攻击失败后用）。
-- 按需安装；`file` / `strings` / `xxd` 系统自带。
+- 按需安装；`file` / `strings` / `hexdump -C` 系统自带。
 
 ## 触发词
 
@@ -40,7 +40,7 @@ triggers: ["图片附件", "zip密码", "二维码", "频谱", "pyjail", "binwal
 
 ## 解题检查清单（按顺序走）
 
-1. **`file` + `binwalk`**：先看真实类型。`binwalk -e` 直接分离，经常一步出货。`xxd | head` 看文件头尾（PK/JPEG 头、flag 字符串直接 `strings | grep flag`）。
+1. **`file` + `binwalk`**：先看真实类型。`binwalk -e` 直接分离，经常一步出货。`hexdump -C | head` 看文件头尾（PK/JPEG 头、flag 字符串直接 `strings | grep flag`）。
 2. **图片隐写**：
    - `zsteg` 跑一遍（PNG 最常用）。
    - `steghide extract -sf` 试空密码和常见密码。

@@ -1,7 +1,8 @@
 # Writeup：{{题目标题}}（{{题目编号}}）
 
-> 一题一份。由 `scripts/generate-writeup.sh` 从解题清单和过程文档半自动填充，
-> 生成后人工补截图、润色、过提交前检查清单再提交。
+> 一题一份。由 `scripts/generate-writeup.sh` 从解题清单和过程文档半自动填充。
+> 截图由执行 Agent 当场用 tmuxshot 完成（先截图、后清理 tmux 会话）；
+> "人工"指赛后人工润色（给每张图配一句话说明、补 [TODO] 项）、过提交前检查清单再提交。
 > 与 `赛后复盘模板.md` 的区别：本模板是**对外**的（含 flag 和完整复现步骤）；
 > 复盘模板是内部学习用的，不写 flag。
 > 字段说明：`{{}}` 为占位符，`[TODO]` 为生成后需人工补的内容。
@@ -47,10 +48,11 @@
 
 ## 四、关键截图
 
-[TODO] 用 tmuxshot.py 从本题 tmux 会话生成，每张配一句话说明：
+[TODO] 用 tmuxshot.py 从本题 tmux 会话生成（截图必须在清理 tmux 会话之前完成：先截图、后清理），每张配一句话说明：
 
 ```bash
-python3 /home/kali/CTF/scripts/tmuxshot.py \
+# <template_root> 为模板根目录，示例：/home/kali/CTF
+python3 <template_root>/scripts/tmuxshot.py \
   --target ctf-{{认领者}}-{{题目编号}} --scrollback 200 \
   --chrome ~/.cache/chrome-headless-shell/chrome-headless-shell-linux64/chrome-headless-shell \
   --title "{{题目编号}} 关键步骤" -o Writeup-{{题目编号}}-step1.png

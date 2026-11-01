@@ -61,7 +61,7 @@ cat > "$WS/IDENTITY.md" <<EOF
 
 ## 说明
 
-本卡由 scripts/new-workspace.sh 生成，登记表（../环境登记.md）要和本卡一致，路径变了两处同步改。
+本卡由 scripts/new-workspace.sh 生成，登记表（../../环境登记.md）要和本卡一致，路径变了两处同步改。
 EOF
 
 cat > "$WS/notes.md" <<EOF

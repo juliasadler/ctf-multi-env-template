@@ -15,7 +15,7 @@ triggers: ["密文", "n e c", "RSA", "base64", "srand", "加密脚本", "椭圆�
 
 - CyberChef：编码识别+转换（网页版即可，无安装成本）。
 - Python + sympy：大数运算（开方/GCD/模逆）。
-- RsaCtfTool：RSA 自动攻击（`git clone` 即用）。
+- RsaCtfTool：RSA 自动攻击（已装好，`~/.local/bin/rsactftool` 直接用）。
 - sage：重型数论题再用（大而重，按需安装，不预装）。
 
 ## 触发词
@@ -59,9 +59,9 @@ triggers: ["密文", "n e c", "RSA", "base64", "srand", "加密脚本", "椭圆�
 | 工具 | 用来干什么 | 一句话用法 |
 | --- | --- | --- |
 | CyberChef | 编码识别+转换 | "Magic" 自动猜，Recipe 链式拼 |
-| RsaCtfTool | RSA 自动攻击 | `python RsaCtfTool.py --publickey pub.pem --uncipher c.txt --autopwn` |
+| RsaCtfTool | RSA 自动攻击 | `rsactftool --publickey pub.pem --uncipher c.txt --autopwn` |
 | factordb | 查 n 分解 | 别人分解过直接抄 p q |
-| sage / sympy | 大数运算 | 本机 sympy 直接用；sage 走远程：`ssh ubuntu 'bash -lc "sage 命令"'`，再不行走 `ssh kali`；三处都没有就停下问用户，不许现场装（文章 §5 工具边界） |
+| sage / sympy | 大数运算 | 本机 sympy 直接用；sage 走远程：`ssh ubuntu 'bash -lc "sage 命令"'`，再不行走 `ssh kali`；三处都没有就停下问用户，不许现场装（《AI+CTF 山东省赛冠军方案》§5 工具边界） |
 
 ## 常见坑
 

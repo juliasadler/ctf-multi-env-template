@@ -3,7 +3,8 @@
 # 用法：
 #   ./scripts/update-status.sh <题目编号> <环境ID> 已认领
 #   ./scripts/update-status.sh <题目编号> <环境ID> 进行中
-#   ./scripts/update-status.sh <题目编号> <环境ID> 已完成 --flag 'flag{...}' [--doc 'workspaces/<环境ID>/challenges/<编号>/过程文档.md']
+#   ./scripts/update-status.sh <题目编号> <环境ID> 已完成 [--flag 'flag{...}'] [--doc 'workspaces/<环境ID>/challenges/<编号>/过程文档.md']
+#     （flag 列为空时才强制带 --flag；官方流程是进行中先 --flag 记 flag，验证通过后再改已完成）
 #   ./scripts/update-status.sh <题目编号> <环境ID> 已放弃 --note '原因'
 #   ./scripts/update-status.sh <题目编号> <环境ID> 阻塞 --note '卡点'
 #   ./scripts/update-status.sh <题目编号> <环境ID> 未开始 --note '归还原因'
@@ -45,10 +46,8 @@ case "$NEW_STATUS" in
   未开始|待办|已认领|进行中|已完成|已放弃|阻塞) ;;
   *) echo "状态只能是：未开始 / 待办 / 已认领 / 进行中 / 已完成 / 已放弃 / 阻塞" >&2; exit 1 ;;
 esac
-if [ "$NEW_STATUS" = "已完成" ] && [ -z "$FLAG" ]; then
-  echo "改成已完成时必须带 --flag，flag 只记本地清单" >&2
-  exit 1
-fi
+# 已完成时 flag 列为空才强制带 --flag（flag 可在进行中先记，验证通过后再改已完成）：
+# 具体检查在下面的 Python 里按清单实际列值做，这里不再硬拦。
 
 CTF_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 LIST="$CTF_ROOT/解题清单.md"
@@ -180,8 +179,16 @@ for i in range(header_idx + 2, len(lines)):
         cells[idx["认领者"]] = env_id
         if "完成时间（北京时间）" in idx:
             cells[idx["完成时间（北京时间）"]] = now
+        # flag 列为空时才强制带 --flag：官方流程是进行中先 --flag 记 flag，验证通过后再改已完成
         if "flag" in idx:
-            cells[idx["flag"]] = flag
+            existing_flag = cells[idx["flag"]].strip()
+            if not flag and existing_flag in ("", "-"):
+                print("已完成时 flag 列为空，请带 --flag（flag 只记本地清单；也可先在进行中记 flag 再改已完成）", file=sys.stderr)
+                sys.exit(1)
+            if flag:
+                cells[idx["flag"]] = flag
+        if doc and "过程文档路径" in idx:
+            cells[idx["过程文档路径"]] = doc
     # flag 一出来就记：进行中时带 --flag 直接写 flag 列，不等到完成（防崩溃丢失）
     if new_status == "进行中" and flag and "flag" in idx:
         cells[idx["flag"]] = flag

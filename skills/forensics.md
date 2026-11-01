@@ -9,7 +9,7 @@ triggers: [".img", ".raw", "攻击者IP", "被删文件", "auth.log", "volatilit
 # Forensics · 数字取证
 
 > 适用题型：给了磁盘镜像（.img/.E01）、内存 dump（.raw/.vmem）、系统日志、流量包里的取证问答（"攻击者 IP 是谁""被删的文件内容"）。
-> 前置：会用 `strings`、`xxd`，知道文件系统大意（EXT4/NTFS 有文件名和删除标记）。
+> 前置：会用 `strings`、`hexdump -C`，知道文件系统大意（EXT4/NTFS 有文件名和删除标记）。
 
 ## 前置工具（Prerequisites）
 
@@ -44,7 +44,7 @@ triggers: [".img", ".raw", "攻击者IP", "被删文件", "auth.log", "volatilit
    - 攻击者 IP → 日志里的登录失败/成功序列（`auth.log` 的 Failed/Accepted）、流量包的异常外连。
    - 被删文件 → `fls` 找删除标记，`icat` 提取；不行就 `strings` 全扫 + `grep` 关键词。
    - 持久化 → 计划任务（cron/systemd）、启动项、注册表 Run 键。
-4. **内存 dump**：`volatility` 先 `imageinfo` 定 profile，再 `pslist`（可疑进程）、`netscan`（网络连接）、`filescan + dumpfiles`（捞文件）。
+4. **内存 dump**：`vol -f <镜像> windows.info` 先看系统信息，再 `vol -f <镜像> windows.pslist`（可疑进程）、`windows.netscan`（网络连接）、`windows.filescan` + `windows.dumpfiles`（捞文件）。
 5. **流量包（取证视角）**：`统计 → 会话` 看"谁跟谁说话最多"；`导出对象 → HTTP/SMB` 捞传输的文件；DNS 查询记录看隧道/外连域名。
 6. **交叉验证**：同一结论至少两个来源对上（如日志 IP + 流量的 IP 一致），再写答案。
 > **防幻觉铁律**：数字、偏移、密钥、地址、flag 只写工具输出或文件里实际出现的值。
@@ -62,5 +62,5 @@ triggers: [".img", ".raw", "攻击者IP", "被删文件", "auth.log", "volatilit
 
 - 坑 1：直接在原镜像上操作 → 写坏了证据就没了。先复制，挂载加 `ro`。
 - 坑 2：上来就逐字节看 → 先拉时间线/问答清单，取证是"带着问题找"，不是"地毯式看"。
-- 坑 3：volatility profile 选错 → `imageinfo` 先跑，profile 不对后面全错。
+- 坑 3：volatility3 插件选错系统版本 → 先跑 `windows.info` 确认系统版本/架构，插件不对后面全错。
 - 坑 4：图片隐写题误判成取证 → 纯"找 hidden flag"附件题回 `misc.md`，取证题一定是"问答"形式。

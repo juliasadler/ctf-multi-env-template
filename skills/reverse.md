@@ -15,7 +15,7 @@ triggers: ["二进制", "要求输入", "stripped", "UPX", ".wasm", "Go二进制
 
 - Ghidra（或 IDA）：反编译（Ghidra 免费，赛前装好，重型）。
 - checksec：看保护/是否 stripped（pwntools 自带）。
-- gdb + pwndbg：动调（比较处下断看寄存器）。
+- gdb + gef：动调（比较处下断看寄存器）。
 - Python：复刻解密脚本。
 
 ## 触发词
@@ -56,12 +56,12 @@ triggers: ["二进制", "要求输入", "stripped", "UPX", ".wasm", "Go二进制
 
 | 工具 | 用来干什么 | 一句话用法 |
 | --- | --- | --- |
-| Ghidra / IDA（含 MCP 形态） | 反编译 | 人用：找 main，跟输入走；Agent：IDA-MCP 直调反编译/交叉引用（需手动在 IDA Pro 配 MCP 插件并注册，文章 §6） |
+| Ghidra / IDA（含 MCP 形态） | 反编译 | 人用：找 main，跟输入走；Agent：IDA-MCP 直调反编译/交叉引用（需手动在 IDA Pro 配 MCP 插件并注册，《AI+CTF 山东省赛冠军方案》§6） |
 | checksec | 看保护 | 逆向主要看是不是 stripped |
-| gdb (+pwndbg) | 动调 | 比较处下断，看寄存器 |
+| gdb (+gef) | 动调 | 比较处下断，看寄存器 |
 | Python | 复刻解密 | 把加密抄下来反着写，样例验证 |
-| Jadx-MCP | Agent 调 Jadx 反编译（Android/Java） | 先请用户打开 Jadx，确认后再调；需手动配置 MCP（文章 §6） |
-| x64dbg-MCP | Agent 调 x64dbg 动调（Windows PE） | 先请用户打开 x64dbg，确认后再调；需手动配置 MCP（文章 §6） |
+| Jadx-MCP | Agent 调 Jadx 反编译（Android/Java） | 先请用户打开 Jadx，确认后再调；需手动配置 MCP（《AI+CTF 山东省赛冠军方案》§6） |
+| x64dbg-MCP | Agent 调 x64dbg 动调（Windows PE） | 先请用户打开 x64dbg，确认后再调；需手动配置 MCP（《AI+CTF 山东省赛冠军方案》§6） |
 
 ## 常见坑
 
